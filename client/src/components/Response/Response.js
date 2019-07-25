@@ -3,15 +3,18 @@ import { Message, Label, Icon } from 'semantic-ui-react';
 import { Mutation } from 'react-apollo';
 import { POST_RESPONSE_LIKE_MUTATION, POST_RESPONSE_DISLIKE_MUTATION, MESSAGE_QUERY } from '../../queries';
 
-const Response = ({ response }) => {
+const Response = ({ response, skip }) => {
     const { id, text, likeCount, dislikeCount } = response;
 
     const _updateStoreAfterAddingReaction = (store, updatedResponse) => {
-        const orderBy = 'createdAt_ASC';
+        const orderBy = 'createdAt_DESC';
         const data = store.readQuery({
           query: MESSAGE_QUERY,
           variables: {
-            orderBy
+            orderBy,
+            filter: '',
+            skip,
+            first: 6
           }
         });
 

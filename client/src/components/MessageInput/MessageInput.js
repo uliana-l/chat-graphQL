@@ -11,14 +11,17 @@ const MessageInput = (props) => {
     };
 
     const _updateStoreAfterAddingMessage = (store, newMessage) => {
-        const orderBy = 'createdAt_ASC';
+        const orderBy = 'createdAt_DESC';
         const data = store.readQuery({
           query: MESSAGE_QUERY,
           variables: {
-            orderBy
+            orderBy,
+            filter: '',
+            skip: 0,
+            first: 6
           }
         });
-        data.messages.messageList.push(newMessage);
+        data.messages.messageList.unshift(newMessage);
         data.messages.count += 1;
         store.writeQuery({
           query: MESSAGE_QUERY,
@@ -47,7 +50,12 @@ const MessageInput = (props) => {
                                 onCompleted={() => {setValue('');}}
                             >
                                 {postMutation => 
-                                    <Button onClick={postMutation}>Send message</Button>
+                                    <Button onClick={() => {
+                                        if (value.trim() !== '')
+                                        postMutation();
+                                    }}>
+                                        Send message
+                                    </Button>
                                 }
                             </Mutation>
                     </Grid.Column>

@@ -11,11 +11,14 @@ const ResponseInput = (props) => {
     };
 
     const _updateStoreAfterAddingResponse = (store, newResponse) => {
-        const orderBy = 'createdAt_ASC';
+        const orderBy = 'createdAt_DESC';
         const data = store.readQuery({
           query: MESSAGE_QUERY,
           variables: {
-            orderBy
+            orderBy,
+            filter: '',
+            skip: props.skip,
+            first: 6
           }
         });
         
@@ -55,8 +58,14 @@ const ResponseInput = (props) => {
                         }}
                         onCompleted={props.showInput}
                     >
+                        
                         {postMutation => 
-                            <Button onClick={postMutation}>Send response</Button>
+                            <Button onClick={() => {
+                                if (value.trim() !== '')
+                                postMutation();
+                            }}>
+                                Send response
+                            </Button>
                         }
                     </Mutation>
                     </Grid.Column>

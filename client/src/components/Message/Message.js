@@ -9,7 +9,7 @@ import {
     MESSAGE_QUERY
 } from '../../queries';
 
-const MessageItem = ({ message }) => {
+const MessageItem = ({ message, skip }) => {
     const { id, text, likeCount, dislikeCount, responses } = message;
     const [ isShown, setIsShown ] = useState(false);
 
@@ -18,11 +18,14 @@ const MessageItem = ({ message }) => {
       }
 
     const _updateStoreAfterAddingReaction = (store, updatedMessage) => {
-      const orderBy = 'createdAt_ASC';
+      const orderBy = 'createdAt_DESC';
       const data = store.readQuery({
         query: MESSAGE_QUERY,
         variables: {
-          orderBy
+          orderBy,
+          filter: '',
+          skip,
+          first: 6
         }
       });
       
@@ -89,13 +92,13 @@ const MessageItem = ({ message }) => {
                     {!isShown && <Button positive onClick={showInput}>
                         Add response
                     </Button>}
-                    {isShown && <ResponseInput id={id} showInput={showInput}/>}
+                    {isShown && <ResponseInput id={id} skip={skip} showInput={showInput}/>}
                     <br />
                     <br />
                     <br />
                     {responses.map(item => {
                         return (
-                            <Response key={item.id} response={item} />
+                            <Response key={item.id} skip={skip} response={item} />
                         );
                     })}
                 </Grid.Column>

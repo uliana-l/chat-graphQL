@@ -9,12 +9,14 @@ import {
 } from '../../queries';
 import MessageItem from './Message';
 import MessageInput from '../MessageInput/MessageInput';
-import { Header, Button, Input, Segment } from 'semantic-ui-react';
+import { Header, Button, Input, Segment, Pagination } from 'semantic-ui-react';
 
 const MessageList = (props) => {
-    const [orderBy, setOrder] = useState('createdAt_ASC');
+    const [orderBy, setOrder] = useState('createdAt_DESC');
     const [filter, setFilter] = useState('');
     const [value, setValue] = useState('');
+    const [skip, setSkip] = useState(0);
+    const [activePage, setActivePage] = useState(1);
 
     const _subscribeToNewMessages = subscribeToMore => {
         subscribeToMore({
@@ -26,7 +28,7 @@ const MessageList = (props) => {
             if (exists) return prev;
 
             return {...prev, messages: {
-              messageList: [...prev.messages.messageList, newMessage],
+              messageList: [newMessage, ...prev.messages.messageList],
               count: prev.messages.messageList.length + 1,
               __typename: prev.messages.__typename
             }};
@@ -75,7 +77,7 @@ const MessageList = (props) => {
     }
 
     const sortByDate = () => {
-      setOrder('createdAt_ASC');
+      setOrder('createdAt_DESC');
     }
 
     const setFilterText = () => {
@@ -86,20 +88,25 @@ const MessageList = (props) => {
       setValue(e.target.value);
     }
 
+    const onPageChange = (event, { activePage }) => {
+      setSkip((activePage - 1) * 6);
+      setActivePage(activePage);
+    }
+
     return (
         <div>
-        <Query query={MESSAGE_QUERY} variables={{ orderBy, filter }}>
+        <Query query={MESSAGE_QUERY} variables={{ orderBy, filter, skip, first: 6 }}>
             {({ loading, error, data, subscribeToMore }) => {
-              console.log('start')
                  if (loading) return <div>Loading...</div>;
                  if (error) return <div>Fetch error</div>;
                  _subscribeToNewMessages(subscribeToMore);
                  _subscribeToNewMessageActions(subscribeToMore);
                  _subscribeToNewResponse(subscribeToMore);
                  _subscribeToNewResponseActions(subscribeToMore);
-                 const { messages: { messageList } } = data;
+                 const { messages: { messageList, count } } = data;
+                 const totalPages = Math.ceil(Number(count) / 6);
                  return (
-                   <div>
+                  <div>
                      <Segment clearing>
                     <Header floated="left">
                       <Button onClick={sortByDate}>
@@ -121,15 +128,24 @@ const MessageList = (props) => {
                       </span>
                     </Header>
                     </Segment>
-                    <div className="message-list">
+                    <div>
                       {messageList.map(item => {
-                        return <MessageItem key={item.id} message={item}/>
+                        return <MessageItem key={item.id} skip={skip} message={item}/>
                       })}
                     </div>
                     <br />
                     <br />
-                    <MessageInput/>
-                   </div>
+                    {activePage===1 && <MessageInput/>}
+                    <Pagination
+                            defaultActivePage={1}
+                            ellipsisItem={null}
+                            firstItem={null}
+                            lastItem={null}
+                            siblingRange={3}
+                            totalPages={totalPages}
+                            onPageChange={onPageChange}
+                    />
+                  </div>
                  );
             }}
         </Query>
