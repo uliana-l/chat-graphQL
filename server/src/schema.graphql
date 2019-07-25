@@ -6,6 +6,8 @@ type Query {
 enum MessageOrderByInput {
   likeCount_DESC
   likeCount_ASC
+  dislikeCount_DESC
+  dislikeCount_ASC
   createdAt_DESC
   createdAt_ASC
 }
