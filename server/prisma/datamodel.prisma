@@ -1,0 +1,17 @@
+type Message {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  text: String!
+  likeCount: Int! 
+  dislikeCount: Int! 
+  responses: [Response]
+}
+
+type Response {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  text: String! 
+  likeCount: Int! 
+  dislikeCount: Int! 
+  message: Message!
+}

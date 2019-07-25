@@ -1,0 +1,14 @@
+#endpoint: ''
+
+datamodel: datamodel.prisma
+generate:
+  - generator: javascript-client
+    output: ../src/generated/prisma-client
+hooks:
+  post-deploy:
+    - prisma generate
+
+
+
+
+endpoint: https://eu1.prisma.sh/lobanovaulianaa-5693b0/chat/dev

@@ -1,0 +1,48 @@
+type Query {
+  info: String!
+  messages(filter: String, skip: Int, first: Int, orderBy: MessageOrderByInput): Messages!
+}
+
+enum MessageOrderByInput {
+  likeCount_DESC
+  likeCount_ASC
+  createdAt_DESC
+  createdAt_ASC
+}
+
+type Subscription {
+  newMessage: Message
+  newResponse: Response
+  newMessageAction: Message
+  newResponseAction: Response
+}
+
+type Mutation {
+  postMessage(text: String!): Message!
+  postResponse(messageId: ID!, text: String!): Response!
+  postMessageLike(messageId: ID!): Message!
+  postMessageDislike(messageId: ID!): Message!
+  postResponseLike(responseId: ID!): Response!
+  postResponseDislike(responseId: ID!): Response!
+}
+
+type Messages {
+  messageList: [Message!]!
+  count: Int!
+}
+
+type Message {
+  id: ID!
+  text: String!
+  likeCount: Int!
+  dislikeCount: Int!
+  responses: [Response]
+}
+
+type Response {
+  id: ID!
+  text: String!
+  likeCount: Int!
+  dislikeCount: Int!
+  message: Message!
+}
