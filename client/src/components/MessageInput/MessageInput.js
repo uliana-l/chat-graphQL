@@ -47,7 +47,9 @@ const MessageInput = (props) => {
                                 update={(store, { data: { postMessage } }) => {
                                     _updateStoreAfterAddingMessage(store, postMessage);
                                 }}
-                                onCompleted={() => {setValue('');}}
+                                onCompleted={() => {setValue('');
+                                    props.goTo();
+                                }}
                             >
                                 {postMutation => 
                                     <Button onClick={() => {

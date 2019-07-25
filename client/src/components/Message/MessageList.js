@@ -93,6 +93,10 @@ const MessageList = (props) => {
       setActivePage(activePage);
     }
 
+    const goTo = () => {
+      props.history.push('/');
+    }
+
     return (
         <div>
         <Query query={MESSAGE_QUERY} variables={{ orderBy, filter, skip, first: 6 }}>
@@ -135,7 +139,7 @@ const MessageList = (props) => {
                     </div>
                     <br />
                     <br />
-                    {activePage===1 && <MessageInput/>}
+                    {activePage===1 && <MessageInput goTo={goTo} />}
                     <Pagination
                             defaultActivePage={1}
                             ellipsisItem={null}
